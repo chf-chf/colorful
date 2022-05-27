@@ -100,7 +100,7 @@ export default {
       try {
         const added = await ipfs.add(file)
         console.log(added, '88')
-        const url = `https://ipfs.io/ipfs/${added.path}`
+        const url = `https://ipfs.infura.io/ipfs/${added.path}`
         this.fileUrl = url
       } catch (error) {
         console.log('error uploading file: ', error)
@@ -112,7 +112,7 @@ export default {
       try {
         const added = await ipfs.add(file.raw)
         console.log(added, '88')
-        const url = `https://ipfs.io/ipfs/${added.path}`
+        const url = `https://ipfs.infura.io/ipfs/${added.path}`
         this.fileUrl = url
       } catch (error) {
         console.log('error uploading file: ', error)
@@ -151,7 +151,7 @@ export default {
         // ]
       }
       let result = await ipfs.add(JSON.stringify(info))
-      console.log('upload', `https://ipfs.io/ipfs/${result.path}`)
+      console.log('upload', `https://ipfs.infura.io/ipfs/${result.path}`)
     }
   },
   mounted() {
