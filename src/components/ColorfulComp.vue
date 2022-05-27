@@ -77,7 +77,7 @@ import { create } from 'ipfs-http-client'
 import {ethers} from 'ethers'
 const ipfs = create('https://ipfs.infura.io:5001/api/v0')
 export default {
-  name: 'HelloWorld',
+  name: 'ColorfulComp',
   props: {
     msg: String
   },
@@ -194,6 +194,10 @@ label {
   font-size: 10px;
   margin-bottom: 17px;
   text-align: left;
+  width: 250px;
+  line-height: 22px;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 .wrapper .no-img {
   width: 230px;
@@ -204,6 +208,7 @@ img {
     display: inline-block;
     width: 230px;
     height: 120px;
+    border-radius: 5px;
 }
 .ipt-area >>> .el-input__inner, .ipt-area >>> .el-textarea__inner {
   background: #1F2024;
