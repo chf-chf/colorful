@@ -1,9 +1,7 @@
 <template>
   <div class="hello">
     <div style="text-align:left; margin-bottom: 20px; display: flex;">
-      <img style="width:162px;height:27.5px" src="../assets/logo-colorful.png" />
-      <div style="font-size:20px;color:#929292;margin: 0 20px;font-weight: 400;">x</div>
-      <img style="width:65px;height:27.5px" src="../assets/logo.png" />
+      <img style="width: 400px;height: 100%" src="../assets/logo-colorful.png" />
     </div>
     <div style="text-align:left;font-size:17px;font-weight:600;margin-bottom:10px;">上传产品</div>
     <div class="flex">
