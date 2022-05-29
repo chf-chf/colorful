@@ -80,7 +80,7 @@ import abi from '../../abi.json'
 const ipfs = create('https://ipfs.infura.io:5001/api/v0')
 
 // 合约地址
-const contractAddress = "0x0a21139d67449d45a1565d672C51DB52DDAC42E7";
+// const contractAddress = "0x0a21139d67449d45a1565d672C51DB52DDAC42E7";
 
 export default {
   name: 'ColorfulComp',
@@ -118,15 +118,30 @@ export default {
       } else {
         // 处理用户没有metamask的逻辑
       }
+
+      // 创建provider
       web3 = new ethers.providers.Web3Provider(web3Provider);
+
+      // 获取账户
+      const accounts = await web3.send('eth_requestAccounts', [])
+      console.log(accounts, '===accounts===')
+      let myAccountAddr = accounts[0]
+
+      // 获取账户余额
+      let balance = ethers.utils.formatEther(await web3.getBalance(myAccountAddr))
+      console.log(balance, '===balance===')
+
       let user = web3.getSigner();
       //ether.js获取chainId等链信息比web3.js简洁且有逻辑的多,直接通过getNetWork即可获得链内容
       let networkInfo = await web3.getNetwork();
       // ethers.js和web3.js不同的点,在于可以直接获得当前钱包地址,通过上面的Signer(user)
       let wallet_address = await user.getAddress();
-      console.log(wallet_address, 'wallet_address')
+      console.log(wallet_address, 'wallet_address') // 等同于myAccountAddr
       console.log(web3, 'web3')
-      let chainId = networkInfo.chainId;
+
+      // 哪个以太坊网络ID：主网mainnet：1，rinkeby:4，kovan:43等等
+      // https://learnblockchain.cn/article/1791
+      let chainId = networkInfo.chainId2
 
       self.web3 = web3;
       self.chainId = chainId;
@@ -135,7 +150,7 @@ export default {
         console.log("用户切换了链", chainId);
       });
       // 连接合约
-      let c = await new ethers.Contract(contractAddress, abi, self.web3);
+      let c = await new ethers.Contract(myAccountAddr, abi, self.web3);
       let signer = self.web3.getSigner();
       console.log(signer, 'signer')
 
@@ -226,10 +241,10 @@ export default {
   mounted() {
     // 进入页面连接钱包
     this.connect(); 
-    console.log(ethers, 'ethers')
-    let privateKey = "0x0123456789012345678901234567890123456789012345678901234567890123";
-    let wallet = new ethers.Wallet(privateKey);
-    console.log(wallet, 'wallet')
+    // console.log(ethers, 'ethers')
+    // let privateKey = "0x0123456789012345678901234567890123456789012345678901234567890123";
+    // let wallet = new ethers.Wallet(privateKey);
+    // console.log(wallet, 'wallet')
   }
 }
 </script>
