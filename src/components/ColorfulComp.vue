@@ -8,15 +8,15 @@
       <div class="left">
         <div class="flex">
           <label>产品名称</label>
-          <el-input class="ipt-area" v-model="inputName" placeholder="请输入内容"></el-input>
+          <el-input class="ipt-area" style="width:400px;" v-model="inputName" placeholder="请输入内容"></el-input>
 
         </div>
         <div class="flex">
           <label>产品故事</label>
-          <el-input class="ipt-area" v-model="inputDesc" type="textarea" rows="4" placeholder="请输入内容"></el-input>
+          <el-input class="ipt-area" style="width:400px;" v-model="inputDesc" type="textarea" rows="4" placeholder="请输入内容"></el-input>
 
         </div>
-        <div class="flex">
+        <div class="flex another">
           <label>产品图片/video</label>
           <!-- <input class="file-upload" type="file" @change="onChange($event)" /> -->
           <el-upload
@@ -30,12 +30,12 @@
         </div>
         <div class="flex">
           <label>上市时间</label>
-          <el-input class="ipt-area" v-model="inputDate" placeholder="请输入内容"></el-input>
+          <el-input class="ipt-area" style="width:400px;" v-model="inputDate" placeholder="请输入内容"></el-input>
 
         </div>
         <div class="flex">
           <label>其他参数</label>
-          <el-input class="ipt-area" v-model="inputOther" type="textarea" rows="4" placeholder="请输入内容"></el-input>
+          <el-input class="ipt-area" style="width:400px;" v-model="inputOther" type="textarea" rows="4" placeholder="请输入内容"></el-input>
 
         </div>
         <div class="flex">
@@ -160,12 +160,20 @@ export default {
       // 上传文件
       console.log(file, 'file');
       this.fileName = file.name
+      const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
       try {
         const added = await ipfs.add(file.raw)
         console.log(added, '88')
         const url = `https://ipfs.infura.io/ipfs/${added.path}`
+        loading.close()
         this.fileUrl = url
       } catch (error) {
+        loading.close()
         console.log('error uploading file: ', error)
       }
     },
@@ -233,7 +241,7 @@ input {
   color: rgba(255, 255, 255, 0.6);
 }
 .colorful {
-  padding: 30px 20%;
+  padding: 30px 10%;
   color: #fff;
 }
 .flex {
@@ -241,10 +249,13 @@ input {
   justify-content: space-between;
   margin-bottom: 20px;
 }
+.flex.another {
+  justify-content: left;
+}
 label {
-  width: 150px;
+  width: 130px;
   text-align: left;
-  font-size: 10px;
+  /* font-size: 10px; */
 }
 .wrapper {
   padding: 18px 14px 13px 12.5px;
@@ -253,7 +264,7 @@ label {
   border-radius: 20px;
 }
 .wrapper p {
-  font-size: 10px;
+  /* font-size: 10px; */
   margin-bottom: 17px;
   text-align: left;
   width: 250px;
@@ -278,15 +289,15 @@ img {
   border-radius: 5px;
   color: rgba(255, 255, 255, 0.6);
   border: none;
-  font-size: 10px;
+  /* font-size: 10px; */
 }
 .el-button--primary {
-  width: 100%;
+  width: 400px;
   background: #E4002B;
   box-shadow: 2px 2px 10px #070002;
   border-radius: 30px;
   border: none;
-  font-size: 10px;
+  /* font-size: 10px; */
 }
 .file-upload {
   height: 25px;
@@ -298,7 +309,7 @@ img {
   color: #fff;
 }
 .upload-demo span {
-  font-size: 10px;
+  /* font-size: 10px; */
   color: rgba(255, 255, 255, 0.6);
   margin-left: 8px;
   display: inline-block;
