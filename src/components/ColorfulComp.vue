@@ -80,7 +80,7 @@ import abi from '../../abi.json'
 const ipfs = create('https://ipfs.infura.io:5001/api/v0')
 
 // 合约地址
-// const contractAddress = "0x0a21139d67449d45a1565d672C51DB52DDAC42E7";
+const contractAddress = "0x3b202c891F0386ef1E54f6334f60afE8f3C15c5c";
 
 export default {
   name: 'ColorfulComp',
@@ -141,7 +141,7 @@ export default {
 
       // 哪个以太坊网络ID：主网mainnet：1，rinkeby:4，kovan:43等等
       // https://learnblockchain.cn/article/1791
-      let chainId = networkInfo.chainId2
+      let chainId = networkInfo.chainId
 
       self.web3 = web3;
       self.chainId = chainId;
@@ -150,7 +150,7 @@ export default {
         console.log("用户切换了链", chainId);
       });
       // 连接合约
-      let c = await new ethers.Contract(myAccountAddr, abi, self.web3);
+      let c = await new ethers.Contract(contractAddress, abi, self.web3);
       let signer = self.web3.getSigner();
       console.log(signer, 'signer')
 
@@ -229,8 +229,9 @@ export default {
       let url = `https://ipfs.infura.io/ipfs/${result.path}`
       console.log('upload', result)
 
+      console.log(self.chainId, 'chainId');
       if (self.chainId == 4) {
-        let r = await self.contract.mint([url]);
+        let r = await self.contract.mintNFT([url]);
         let tx = await r.wait();
         console.log(tx);
       } else {
