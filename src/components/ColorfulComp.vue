@@ -256,7 +256,7 @@ input {
   color: rgba(255, 255, 255, 0.6);
 }
 .colorful {
-  padding: 30px 10%;
+  padding: 30px 18%;
   color: #fff;
 }
 .flex {
