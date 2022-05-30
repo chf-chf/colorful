@@ -3,7 +3,10 @@
     <div style="text-align:left; margin-bottom: 20px; display: flex;">
       <img style="width: 400px;height: 100%" src="../assets/logo-colorful.png" />
     </div>
-    <div style="text-align:left;font-size:17px;font-weight:600;margin-bottom:10px;">上传产品</div>
+    <div class="flex">
+      <p style="font-size:17px;font-weight:600;">上传产品</p>
+      <div>钱包地址：{{address ? address : '未连接'}}&nbsp;&nbsp;{{isWhiteList ? '管理白名单' : '非白名单'}}</div>
+    </div>
     <div class="flex">
       <div class="left">
         <div class="flex">
@@ -12,7 +15,7 @@
 
         </div>
         <div class="flex">
-          <label>产品故事</label>
+          <label>产品介绍</label>
           <el-input class="ipt-area" style="width:400px;" v-model="inputDesc" type="textarea" rows="4" placeholder="请输入内容"></el-input>
 
         </div>
@@ -59,6 +62,16 @@
         </div>
       </div>
     </div>
+    <div v-if="tx">
+      <p>
+        <el-link :href="chainId === 4 ? `https://rinkeby.etherscan.io/tx/${tx.transactionHash}` : `https://etherscan.io/tx/${transactionHash}`" target="blank">etherscan</el-link>
+      </p>
+      <p>
+        <el-link href="https://testnets.opensea.io/account" target="_blank">
+          testnets.opensea
+        </el-link>
+      </p>
+    </div>
     <!-- ipfs demo -->
     <!-- <div>
       <input type="file" @change="onChange($event)" />
@@ -91,12 +104,15 @@ export default {
     return {
       web3: null,
       chainId: null,
+      address: '',
       fileUrl: '',
       inputName: '',
       inputDesc: '',
       inputDate: '',
       inputOther: '',
-      fileName: ''
+      fileName: '',
+      tx: null,
+      isWhiteList: false
     }
   },
   methods: {
@@ -122,7 +138,7 @@ export default {
       // 创建provider
       web3 = new ethers.providers.Web3Provider(web3Provider);
 
-      // 获取账户
+      // 获取当前钱包账户
       const accounts = await web3.send('eth_requestAccounts', [])
       console.log(accounts, '===accounts===')
       let myAccountAddr = accounts[0]
@@ -156,6 +172,10 @@ export default {
 
       // 创建连接到签名器signer
       self.contract = c.connect(signer);
+
+      // 判断创建NFT作者是否在白名单内
+      self.isWhiteList = await self.contract.isWhiteList(wallet_address)
+      console.log(self.isWhiteList, 'isWhiteList')
     },
     async onChange(e) {
       const file = e.target.files[0]
@@ -207,33 +227,43 @@ export default {
             display_value: 'High'
           }
         },
-        attributes: this.inputOther
-        // attributes: [
-        //   {
-        //     trait_type: 'model',
-        //     value: 'RTX3080',
-        //   },
-        //   {
-        //     display_type: 'boost_number',
-        //     trait_type: 'Power',
-        //     value: 40
-        //   },
-        //   {
-        //     display_type: 'number',
-        //     trait_type: 'Gerneration',
-        //     value: 2
-        //   }
-        // ]
+        // attributes: this.inputOther
+        attributes: [
+          {
+            trait_type: 'Chip_Group',
+            value: 'Intel Z690',
+          },
+          {
+            // display_type: 'boost_number',
+            trait_type: 'Graphics_Card',
+            value: 'PCI Express '
+          },
+          {
+            // display_type: 'number',
+            trait_type: 'Model_Type',
+            value: 'CVN Z690D5'
+          },
+          {
+            display_type: 'date',
+            trait_type: 'Setup Time',
+            value: +new Date()
+          }
+        ]
       }
       let result = await ipfs.add(JSON.stringify(info))
       let url = `https://ipfs.infura.io/ipfs/${result.path}`
-      console.log('upload', result)
+      console.log('upload', result, url)
 
-      console.log(self.chainId, 'chainId');
       if (self.chainId == 4) {
-        let r = await self.contract.mintNFT([url]);
-        let tx = await r.wait();
-        console.log(tx);
+        try {
+          let r = await self.contract.mintNFT([url]);
+          let tx = await r.wait();
+          self.tx = tx
+          console.log(tx);
+        } catch (error) {
+          console.log('error mintNFT', error);
+        }
+
       } else {
         alert("bad chain");
       }
