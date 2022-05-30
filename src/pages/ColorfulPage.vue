@@ -3,9 +3,25 @@
     <div style="text-align:left; margin-bottom: 20px; display: flex;">
       <img style="width: 400px;height: 100%" src="../assets/logo-colorful.png" />
     </div>
-    <div class="flex">
-      <p style="font-size:17px;font-weight:600;">上传产品</p>
-      <div>钱包地址：{{address ? address.replace(/(.{6}).*(.{4})/, '$1...$2') : '未连接'}}&nbsp;&nbsp;<span style="cursor: pointer;" :class="{'notWhitelist': !isWhiteList}" @click="whitelistSetting">{{isAdmin ? '管理白名单' : isWhiteList ? '' : '非白名单'}}</span></div>
+    <div style="text-align: right;margin-bottom: 20px;">
+      <!-- <p style="font-size:17px;font-weight:600;">上传产品</p> -->
+      <div>
+          <div v-if="address">
+            钱包地址：{{address.replace(/(.{6}).*(.{4})/, '$1...$2')}}
+            <span style="cursor: pointer;" @click="whitelistSetting" v-if="isAdmin">管理白名单</span>
+            <span :class="{'notWhitelist': !isWhiteList}" v-else-if="!isWhiteList">
+                非白名单
+            </span>
+            <!-- <span style="cursor: pointer;" :class="{'notWhitelist': isWhiteList}">
+                {{isAdmin ? '管理白名单' : !isWhiteList ? '' : '非白名单'}}
+            </span> -->
+          </div>
+          <div v-else>
+              <el-button @click="connect" round>连接钱包</el-button>
+          </div>
+          <!-- <div>钱包地址：{{address ? address.replace(/(.{6}).*(.{4})/, '$1...$2') : '连接钱包'}}</div> -->
+      </div>
+      <!-- <div>钱包地址：{{address ? address.replace(/(.{6}).*(.{4})/, '$1...$2') : '未连接'}}&nbsp;&nbsp;<span v-if="address" style="cursor: pointer;" :class="{'notWhitelist': !isWhiteList}" @click="whitelistSetting">{{isAdmin ? '管理白名单' : isWhiteList ? '' : '非白名单'}}</span></div> -->
     </div>
     <div class="flex">
       <div class="left">
@@ -140,13 +156,13 @@ export default {
       web3 = new ethers.providers.Web3Provider(web3Provider);
 
       // 获取当前钱包账户
-      const accounts = await web3.send('eth_requestAccounts', [])
-      console.log(accounts, '===accounts===')
-      let myAccountAddr = accounts[0]
+    //   const accounts = await web3.send('eth_requestAccounts', [])
+    //   console.log(accounts, '===accounts===')
+    //   let myAccountAddr = accounts[0]
 
       // 获取账户余额
-      let balance = ethers.utils.formatEther(await web3.getBalance(myAccountAddr))
-      console.log(balance, '===balance===')
+    //   let balance = ethers.utils.formatEther(await web3.getBalance(myAccountAddr))
+    //   console.log(balance, '===balance===')
 
       let user = web3.getSigner();
       //ether.js获取chainId等链信息比web3.js简洁且有逻辑的多,直接通过getNetWork即可获得链内容
@@ -176,11 +192,13 @@ export default {
 
       // 判断创建NFT作者是否在白名单内
       self.isWhiteList = await self.contract.isWhiteList(wallet_address)
+    //   self.isWhiteList = false
       console.log(self.isWhiteList, 'isWhiteList')
 
       // 判断是否为合约管理员
       let adminAddr = await self.contract.owner()
       self.isAdmin = adminAddr == wallet_address
+    //   self.isAdmin = true
       console.log(self.isAdmin, 'isadmin')
     },
     // async onChange(e) {
@@ -277,8 +295,8 @@ export default {
     whitelistSetting() {
         let self = this
         // this.$router.push({name: 'WhitelistPage'}).catch(err => err)
-        this.$prompt('请输入合约地址', '提示', {
-            confirmButtonText: '添加',
+        self.$prompt('请输入白名单地址', '提示', {
+            confirmButtonText: '确认',
             cancelButtonText: '取消'
         }).then(async ({value}) => {
             let whitelist = await self.contract.setWhiteList(value, true)
