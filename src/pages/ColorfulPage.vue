@@ -5,7 +5,7 @@
     </div>
     <div class="flex">
       <p style="font-size:17px;font-weight:600;">上传产品</p>
-      <div>钱包地址：{{address ? address : '未连接'}}&nbsp;&nbsp;<span style="cursor: pointer;" :class="{'notWhitelist': !isWhiteList}" @click="whitelistSetting">{{isAdmin ? '管理白名单' : isWhiteList ? '' : '非白名单'}}</span></div>
+      <div>钱包地址：{{address ? address.replace(/(.{6}).*(.{4})/, '$1...$2') : '未连接'}}&nbsp;&nbsp;<span style="cursor: pointer;" :class="{'notWhitelist': !isWhiteList}" @click="whitelistSetting">{{isAdmin ? '管理白名单' : isWhiteList ? '' : '非白名单'}}</span></div>
     </div>
     <div class="flex">
       <div class="left">
@@ -275,8 +275,17 @@ export default {
       }
     },
     whitelistSetting() {
-        this.$router.push({name: 'WhitelistPage'}).catch(err => err)
-        console.log('click', this.$router);
+        let self = this
+        // this.$router.push({name: 'WhitelistPage'}).catch(err => err)
+        this.$prompt('请输入合约地址', '提示', {
+            confirmButtonText: '添加',
+            cancelButtonText: '取消'
+        }).then(async ({value}) => {
+            let whitelist = await self.contract.setWhiteList(value, true)
+            console.log(whitelist, 'val000')
+        }).catch(() => {
+            console.log('888');
+        })
     }
   },
   mounted() {
