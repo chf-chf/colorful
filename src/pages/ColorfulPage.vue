@@ -59,7 +59,7 @@
       </div>
       <div class="right">
         <div class="wrapper">
-          <div v-show="fileUrl" style="padding-left:7px">
+          <div v-show="fileUrl">
             <img :src="fileUrl" />
           </div>
           <div v-show="!fileUrl" class="no-img">暂无图片</div>
@@ -308,7 +308,7 @@ export default {
           console.log(tx, 'done');
         } catch (error) {
           nftLoading.close()
-          self.$message.error('添加NFT失败')  
+          self.$message.error('非白名单添加失败')  
           console.log('error mintNFT', error);
         }
 
@@ -372,6 +372,8 @@ input {
   width: 1000px;
   margin: 0 auto;
   color: #fff;
+  font-weight: 700;
+  font-family: Arial, Helvetica, sans-serif;
 }
 .flex {
   display: flex;
@@ -388,6 +390,7 @@ label {
 }
 .wrapper {
   padding: 18px 14px 13px 12.5px;
+  margin-left: 100px;
   background: #1F2024;
   box-shadow: inset 4px 4px 20px #000000, inset -4px -4px 20px rgba(99, 99, 99, 0.7);
   border-radius: 20px;
@@ -408,8 +411,10 @@ label {
 }
 img {
   display: inline-block;
-  width: 230px;
-  height: 120px;
+  /* width: 230px;
+  height: 120px; */
+  width: 100%;
+  height: 100%;
   border-radius: 5px;
 }
 .ipt-area >>> .el-input__inner, .ipt-area >>> .el-textarea__inner {
