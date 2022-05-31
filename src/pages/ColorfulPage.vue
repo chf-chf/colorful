@@ -368,7 +368,9 @@ input {
   color: rgba(255, 255, 255, 0.6);
 }
 .colorful {
-  padding: 30px 18%;
+  /* padding: 30px 18%; */
+  width: 1000px;
+  margin: 0 auto;
   color: #fff;
 }
 .flex {
