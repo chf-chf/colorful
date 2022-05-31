@@ -78,6 +78,20 @@
         </div>
       </div>
     </div>
+    <el-dialog
+    title="提示"
+    :visible.sync="dialogVisible"
+    width="40%">
+    <el-input v-model="whiteAddr" placeholder="请输入白名单地址"></el-input>
+    <div class="switch-btn">
+        <span>是否添加到白名单</span>
+        <el-switch v-model="isAdd" active-color="#409EFF" inactive-color="#C0CCDA"></el-switch>
+    </div>
+    <span slot="footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button @click="handleClose">确定</el-button>
+    </span>
+    </el-dialog>
     <div v-if="tx">
       <p>
         <el-link :href="chainId === 4 ? `https://rinkeby.etherscan.io/tx/${tx.transactionHash}` : `https://etherscan.io/tx/${transactionHash}`" target="blank">查看etherscan</el-link>
@@ -129,7 +143,10 @@ export default {
       fileName: '',
       tx: null,
       isAdmin: false,
-      isWhiteList: false
+      isWhiteList: false,
+      isAdd: true,
+      whiteAddr: '',
+      dialogVisible: false
     }
   },
   methods: {
@@ -293,17 +310,37 @@ export default {
       }
     },
     whitelistSetting() {
-        let self = this
+        this.dialogVisible = true
         // this.$router.push({name: 'WhitelistPage'}).catch(err => err)
-        self.$prompt('请输入白名单地址', '提示', {
-            confirmButtonText: '确认',
-            cancelButtonText: '取消'
-        }).then(async ({value}) => {
-            let whitelist = await self.contract.setWhiteList(value, true)
-            console.log(whitelist, 'val000')
-        }).catch(() => {
-            console.log('888');
-        })
+        // self.$prompt('请输入白名单地址', '提示', {
+        //     confirmButtonText: '确认',
+        //     cancelButtonText: '取消'
+        // }).then(async ({value}) => {
+        //     let whitelist = await self.contract.setWhiteList(value, true)
+        //     console.log(whitelist, 'val000')
+        // }).catch(() => {
+        //     console.log('888');
+        // })
+    },
+    async handleClose() {
+        console.log(this.whiteAddr, 'whiteAddr', this.isAdd)
+        let self = this;
+        if (!self.whiteAddr) {
+            self.$message.error('输入内容不能为空！')
+            return;
+        }
+        try {
+            let whitelist = await self.contract.setWhiteList(self.whiteAddr, self.isAdd)
+            self.dialogVisible = false
+            self.whiteAddr = ''
+            console.log(whitelist, 'whitelist')
+        } catch (error) {
+            console.log(error, 'error')
+            self.$message.error('添加白名单失败')
+            self.dialogVisible = false
+            self.whiteAddr = ''
+        }
+
     }
   },
   mounted() {
@@ -403,5 +440,13 @@ img {
 .el-link.el-link--default {
     color: #fff;
     font-size: 20px;
+}
+.switch-btn {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+.switch-btn span {
+    margin-right: 10px;
 }
 </style>
