@@ -265,27 +265,27 @@ export default {
           }
         },
         // attributes: this.inputOther
-        attributes: [
-          {
-            trait_type: 'Chip_Group',
-            value: 'Intel Z690',
-          },
-          {
-            // display_type: 'boost_number',
-            trait_type: 'Graphics_Card',
-            value: 'PCI Express '
-          },
-          {
-            // display_type: 'number',
-            trait_type: 'Model_Type',
-            value: 'CVN Z690D5'
-          },
-          {
-            display_type: 'date',
-            trait_type: 'Setup Time',
-            value: +new Date()
-          }
-        ]
+        // attributes: [
+        //   {
+        //     trait_type: 'Chip_Group',
+        //     value: 'Intel Z690',
+        //   },
+        //   {
+        //     // display_type: 'boost_number',
+        //     trait_type: 'Graphics_Card',
+        //     value: 'PCI Express '
+        //   },
+        //   {
+        //     // display_type: 'number',
+        //     trait_type: 'Model_Type',
+        //     value: 'CVN Z690D5'
+        //   },
+        //   {
+        //     display_type: 'date',
+        //     trait_type: 'Setup Time',
+        //     value: +new Date()
+        //   }
+        // ]
       }
       let result = await ipfs.add(JSON.stringify(info))
       let url = `https://ipfs.infura.io/ipfs/${result.path}`
