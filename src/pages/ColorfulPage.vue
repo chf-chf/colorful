@@ -482,7 +482,7 @@ img {
   /* font-size: 10px; */
 }
 .connect-btn.el-button {
-    border: none;
+    border: 1px solid rgb(99 99 99 / 31%);
     background-color: #1F2024;
     color: #fff;
     box-shadow: -4px -4px 20px rgb(99 99 99 / 31%), 4px 4px 20px #000000;
