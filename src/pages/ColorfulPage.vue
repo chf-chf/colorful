@@ -44,6 +44,7 @@
         </div>
         <div class="flex">
           <label>上市时间</label>
+          <!-- <el-date-picker v-model="inputDate" type="date" placeholder="请选择"></el-date-picker> -->
           <el-input class="ipt-area" style="width:400px;" v-model="inputDate" placeholder="请输入内容"></el-input>
 
         </div>
@@ -267,11 +268,39 @@ export default {
     },
     async onUploadInfo() {
       let self = this
+      console.log(+new Date(this.inputDate), 'date')
+
       console.log('contract', self.contract)
+      if (!this.inputName) {
+          self.$message.error('产品名称不能为空！')
+          return;
+      }
+
+      if (!this.inputDesc) {
+          self.$message.error('产品介绍不能为空！')
+          return;
+      }
+      if (!this.fileUrl) {
+          self.$message.error('图片不能为空！')
+          return;
+      }
+      if (!this.inputDate) {
+          self.$message.error('上市时间不能为空！')
+          return;
+      }
+
+
       let info = {
         name: this.inputName,
         description: this.inputDesc,
         img: this.fileUrl,
+        attributes: [
+            {
+                display_type: 'date',
+                trait_type: 'Setup Time',
+                value: +new Date(this.inputDate)
+            }
+        ]
         // properties: {
         //   base: 'starfish',
         //   rich_property: {
@@ -321,6 +350,10 @@ export default {
           let tx = await r.wait();
           self.tx = tx
           nftLoading.close()
+          self.$message({
+              message: '上传成功了',
+              type: 'success'
+          })
           console.log(tx, 'done');
         } catch (error) {
           nftLoading.close()
@@ -346,7 +379,6 @@ export default {
         // })
     },
     async handleClose() {
-        console.log(this.whiteAddr, 'whiteAddr', this.isAdd)
         let self = this;
         if (!self.whiteAddr) {
             self.$message.error('输入内容不能为空！')
