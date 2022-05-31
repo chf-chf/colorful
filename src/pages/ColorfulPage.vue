@@ -60,8 +60,15 @@
       <div class="right">
         <div class="wrapper">
           <div v-show="fileUrl">
-            <img :src="fileUrl" />
+              <el-image :src="fileUrl">
+                <div slot="error" class="image-slot">
+                    <i class="el-icon-picture-outline"></i>
+                </div>
+              </el-image>
           </div>
+          <!-- <div v-show="fileUrl">
+            <img :src="fileUrl" />
+          </div> -->
           <div v-show="!fileUrl" class="no-img">暂无图片</div>
           <div style="padding-left: 7px;">
             <p>产品名称：{{inputName}}</p>
@@ -304,7 +311,7 @@ export default {
         console.log('minting...');
         const nftLoading = this.$loading({
             lock: true,
-            text: '上传NFT中...',
+            text: '上传中...',
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)'
         });
@@ -414,9 +421,9 @@ label {
   word-break: break-all;
 }
 .wrapper .no-img {
-  width: 230px;
-  height: 120px;
-  color: 10px;
+  /* width: 230px;
+  height: 120px; */
+  margin-bottom: 50px;
 }
 img {
   display: inline-block;
