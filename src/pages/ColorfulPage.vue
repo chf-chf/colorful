@@ -291,7 +291,7 @@ export default {
       let url = `https://ipfs.infura.io/ipfs/${result.path}`
       console.log('upload', result, url)
 
-      if (self.chainId == config.chainId) {
+      if (self.chainId == 4) {
         console.log('minting...');
         const nftLoading = this.$loading({
             lock: true,
