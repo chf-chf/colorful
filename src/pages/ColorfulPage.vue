@@ -69,7 +69,16 @@
             <p>上市时间：{{inputDate}}</p>
             <p>产品参数：{{inputOther}}</p>
           </div>
-
+        </div>
+        <div v-if="tx" style="margin-left: 100px; margin-top: 20px;">
+            <p>
+                <el-link :href="chainId === 4 ? `https://rinkeby.etherscan.io/tx/${tx.transactionHash}` : `https://etherscan.io/tx/${transactionHash}`" target="blank">查看etherscan</el-link>
+            </p>
+            <p>
+                <el-link href="https://testnets.opensea.io/account" target="_blank">
+                    查看NFT-testnets.opensea
+                </el-link>
+            </p>
         </div>
       </div>
     </div>
@@ -87,7 +96,7 @@
         <el-button @click="handleClose">确定</el-button>
     </span>
     </el-dialog>
-    <div v-if="tx">
+    <!-- <div v-if="tx">
       <p>
         <el-link :href="chainId === 4 ? `https://rinkeby.etherscan.io/tx/${tx.transactionHash}` : `https://etherscan.io/tx/${transactionHash}`" target="blank">查看etherscan</el-link>
       </p>
@@ -96,7 +105,7 @@
           查看NFT-testnets.opensea
         </el-link>
       </p>
-    </div>
+    </div> -->
     <!-- ipfs demo -->
     <!-- <div>
       <input type="file" @change="onChange($event)" />
@@ -256,14 +265,14 @@ export default {
         name: this.inputName,
         description: this.inputDesc,
         img: this.fileUrl,
-        properties: {
-          base: 'starfish',
-          rich_property: {
-            name: 'type',
-            value: '3080',
-            display_value: 'High'
-          }
-        },
+        // properties: {
+        //   base: 'starfish',
+        //   rich_property: {
+        //     name: 'type',
+        //     value: '3080',
+        //     display_value: 'High'
+        //   }
+        // },
         // attributes: this.inputOther
         // attributes: [
         //   {
