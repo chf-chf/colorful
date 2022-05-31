@@ -12,16 +12,11 @@
             <span :class="{'notWhitelist': !isWhiteList}" v-else-if="!isWhiteList">
                 非白名单
             </span>
-            <!-- <span style="cursor: pointer;" :class="{'notWhitelist': isWhiteList}">
-                {{isAdmin ? '管理白名单' : !isWhiteList ? '' : '非白名单'}}
-            </span> -->
           </div>
           <div v-else>
-              <el-button @click="connect" round>连接钱包</el-button>
+              <el-button class="connect-btn" @click="connect" round>连接钱包</el-button>
           </div>
-          <!-- <div>钱包地址：{{address ? address.replace(/(.{6}).*(.{4})/, '$1...$2') : '连接钱包'}}</div> -->
       </div>
-      <!-- <div>钱包地址：{{address ? address.replace(/(.{6}).*(.{4})/, '$1...$2') : '未连接'}}&nbsp;&nbsp;<span v-if="address" style="cursor: pointer;" :class="{'notWhitelist': !isWhiteList}" @click="whitelistSetting">{{isAdmin ? '管理白名单' : isWhiteList ? '' : '非白名单'}}</span></div> -->
     </div>
     <div class="flex">
       <div class="left">
@@ -119,11 +114,12 @@
 import { create } from 'ipfs-http-client'
 import {ethers} from 'ethers'
 import abi from '../../abi.json'
+import config from '../../config'
 
 const ipfs = create('https://ipfs.infura.io:5001/api/v0')
 
 // 合约地址
-const contractAddress = "0x3b202c891F0386ef1E54f6334f60afE8f3C15c5c";
+// const contractAddress = "0x3b202c891F0386ef1E54f6334f60afE8f3C15c5c";
 
 export default {
   name: 'ColorfulPage',
@@ -196,11 +192,11 @@ export default {
       self.web3 = web3;
       self.chainId = chainId;
       self.address = wallet_address;
-      window.ethereum.on("chainChanged", (chainId) => {
+      window.ethereum.on("chainChanged", chainId => {
         console.log("用户切换了链", chainId);
       });
       // 连接合约
-      let c = await new ethers.Contract(contractAddress, abi, self.web3);
+      let c = await new ethers.Contract(config.contractAddress, abi, self.web3);
       let signer = self.web3.getSigner();
       console.log(signer, 'signer')
 
@@ -295,13 +291,24 @@ export default {
       let url = `https://ipfs.infura.io/ipfs/${result.path}`
       console.log('upload', result, url)
 
-      if (self.chainId == 4) {
+      if (self.chainId == config.chainId) {
+        console.log('minting...');
+        const nftLoading = this.$loading({
+            lock: true,
+            text: '上传NFT中...',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+        });
         try {
+          
           let r = await self.contract.mintNFT([url]);
           let tx = await r.wait();
           self.tx = tx
-          console.log(tx);
+          nftLoading.close()
+          console.log(tx, 'done');
         } catch (error) {
+          nftLoading.close()
+          self.$message.error('添加NFT失败')  
           console.log('error mintNFT', error);
         }
 
@@ -418,6 +425,12 @@ img {
   border-radius: 30px;
   border: none;
   /* font-size: 10px; */
+}
+.connect-btn.el-button {
+    border: none;
+    background-color: #1F2024;
+    color: #fff;
+    box-shadow: -4px -4px 20px rgb(99 99 99 / 31%), 4px 4px 20px #000000;
 }
 .file-upload {
   height: 25px;
