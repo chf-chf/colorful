@@ -48,11 +48,11 @@
           <el-input class="ipt-area" style="width:400px;" v-model="inputDate" placeholder="请输入内容"></el-input>
 
         </div>
-        <div class="flex">
+        <!-- <div class="flex">
           <label>其他参数</label>
           <el-input class="ipt-area" style="width:400px;" v-model="inputOther" type="textarea" rows="4" placeholder="请输入内容"></el-input>
 
-        </div>
+        </div> -->
         <div class="flex">
           <label />
           <el-button type="primary" round @click="onUploadInfo">上传产品</el-button>
@@ -75,7 +75,7 @@
             <p>产品名称：{{inputName}}</p>
             <p>产品故事：{{inputDesc}}</p>
             <p>上市时间：{{inputDate}}</p>
-            <p>产品参数：{{inputOther}}</p>
+            <!-- <p>产品参数：{{inputOther}}</p> -->
           </div>
         </div>
         <div v-if="tx" style="margin-left: 100px; margin-top: 20px;">
@@ -152,7 +152,7 @@ export default {
       inputName: '',
       inputDesc: '',
       inputDate: '',
-      inputOther: '',
+    //   inputOther: '',
       fileName: '',
       tx: null,
       isAdmin: false,
@@ -434,7 +434,6 @@ input {
 label {
   width: 130px;
   text-align: left;
-  /* font-size: 10px; */
 }
 .wrapper {
   padding: 18px 14px 13px 12.5px;
@@ -444,7 +443,6 @@ label {
   border-radius: 20px;
 }
 .wrapper p {
-  /* font-size: 10px; */
   margin-bottom: 17px;
   text-align: left;
   width: 250px;
@@ -471,7 +469,6 @@ img {
   border-radius: 5px;
   color: rgba(255, 255, 255, 0.6);
   border: none;
-  /* font-size: 10px; */
 }
 .el-button--primary {
   width: 400px;
@@ -479,7 +476,6 @@ img {
   box-shadow: 2px 2px 10px #070002;
   border-radius: 30px;
   border: none;
-  /* font-size: 10px; */
 }
 .connect-btn.el-button {
     border: 1px solid rgb(99 99 99 / 31%);
@@ -497,7 +493,6 @@ img {
   color: #fff;
 }
 .upload-demo span {
-  /* font-size: 10px; */
   color: rgba(255, 255, 255, 0.6);
   margin-left: 8px;
   display: inline-block;
