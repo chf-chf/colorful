@@ -80,11 +80,11 @@
         </div>
         <div v-if="tx" style="margin-left: 100px; margin-top: 20px;">
             <p>
-                <el-link :href="chainId === 4 ? `https://rinkeby.etherscan.io/tx/${tx.transactionHash}` : `https://etherscan.io/tx/${transactionHash}`" target="blank">查看etherscan</el-link>
+                <el-link :href="chainId === 4 ? `https://rinkeby.etherscan.io/tx/${tx.transactionHash}` : `https://etherscan.io/tx/${transactionHash}`" target="blank">查看-etherscan</el-link>
             </p>
             <p>
-                <el-link href="https://testnets.opensea.io/account" target="_blank">
-                    查看NFT-testnets.opensea
+                <el-link :href="chainId === 4 ? 'https://testnets.opensea.io/account' : 'https://opensea.io/account'" target="_blank">
+                    查看-opensea
                 </el-link>
             </p>
         </div>
