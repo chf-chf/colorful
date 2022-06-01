@@ -72,7 +72,7 @@
           <!-- <div v-show="fileUrl">
             <img :src="fileUrl" />
           </div> -->
-          <div v-show="!fileUrl" class="no-img">暂无图片</div>
+          <div v-show="!fileUrl" class="no-img">暂无显示</div>
           <div style="padding-left: 7px;">
             <p>产品名称：{{inputName}}</p>
             <p>产品故事：{{inputDesc}}</p>
@@ -173,8 +173,7 @@ export default {
           method: "wallet_switchEthereumChain",
           params: [{ chainId: config.chainId }],
         })
-        .then((res) => {
-            console.log(res, 'result chain')
+        .then(() => {
             // window.location.reload();
             this.connect()
         })
@@ -231,24 +230,26 @@ export default {
       window.ethereum.on("chainChanged", chainId => {
         console.log("用户切换了链", chainId);
       });
-      // 连接合约
-      let c = await new ethers.Contract(config.contractAddress, abi, self.web3);
-      let signer = self.web3.getSigner();
-      console.log(signer, 'signer')
+        // 连接合约
+        let c = await new ethers.Contract(config.contractAddress, abi, self.web3);
+        let signer = self.web3.getSigner();
+        console.log(signer, 'signer')
 
-      // 创建连接到签名器signer
-      self.contract = c.connect(signer);
+        // 创建连接到签名器signer
+        self.contract = c.connect(signer);
 
-      // 判断创建NFT作者是否在白名单内
-      self.isWhiteList = await self.contract.isWhiteList(wallet_address)
-    //   self.isWhiteList = false
-      console.log(self.isWhiteList, 'isWhiteList')
+        // 判断是否为合约管理员
+        let adminAddr = await self.contract.owner()
+        self.isAdmin = adminAddr == wallet_address
+        // self.isAdmin = true
+        console.log(self.isAdmin, 'isadmin')
 
-      // 判断是否为合约管理员
-      let adminAddr = await self.contract.owner()
-      self.isAdmin = adminAddr == wallet_address
-    //   self.isAdmin = true
-      console.log(self.isAdmin, 'isadmin')
+        // 判断创建NFT作者是否在白名单内
+        self.isWhiteList = await self.contract.isWhiteList(wallet_address)
+        // self.isWhiteList = false
+        console.log(self.isWhiteList, 'isWhiteList')
+
+
     },
     // async onChange(e) {
     //   const file = e.target.files[0]
@@ -367,7 +368,7 @@ export default {
       let url = `ipfs://${result.path}`
       console.log('upload', result, url)
 
-      if (self.chainId == 4) {
+      if (self.chainId == parseInt(config.chainId)) {
         
         try {
           
@@ -426,7 +427,7 @@ export default {
   mounted() {
     // 进入页面连接钱包
     this.connect();
-    // this.change_chain() 
+    this.change_chain() 
     // console.log(ethers, 'ethers')
     // let privateKey = "0x0123456789012345678901234567890123456789012345678901234567890123";
     // let wallet = new ethers.Wallet(privateKey);
