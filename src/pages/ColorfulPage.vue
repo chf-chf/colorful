@@ -61,11 +61,13 @@
       <div class="right">
         <div class="wrapper">
           <div v-show="fileUrl">
-              <el-image :src="fileUrl">
-                <div slot="error" class="image-slot">
-                    <i class="el-icon-picture-outline"></i>
-                </div>
-              </el-image>
+                <el-image v-if="isImg" :src="fileUrl">
+                    <div slot="error" class="image-slot">
+                        <i class="el-icon-picture-outline"></i>
+                    </div>
+                </el-image>
+                <video v-else controls :src="fileUrl"></video>
+
           </div>
           <!-- <div v-show="fileUrl">
             <img :src="fileUrl" />
@@ -160,7 +162,8 @@ export default {
       isWhiteList: false,
       isAdd: true,
       whiteAddr: '',
-      dialogVisible: false
+      dialogVisible: false,
+      isImg: null
     }
   },
   methods: {
@@ -264,7 +267,10 @@ export default {
     async uploadFile(file) {
       // 上传文件
       console.log(file, 'file');
-      this.fileName = file.name
+      let {raw: {type}, name} = file
+
+      this.fileName = name
+      this.isImg = type.includes('image')
       const loading = this.$loading({
           lock: true,
           text: 'Loading',
@@ -310,7 +316,7 @@ export default {
         name: this.inputName,
         description: this.inputDesc,
         // img: this.fileUrl,
-        img: `ipfs://${this.imgHash}`,
+        image: `ipfs://${this.imgHash}`,
         attributes: [
             {
                 display_type: 'date',
@@ -349,19 +355,20 @@ export default {
         //   }
         // ]
       }
-      let result = await ipfs.add(JSON.stringify(info))
-    //   let url = `https://ipfs.infura.io/ipfs/${result.path}`
-      let url = `ipfs://${result.path}`
-      console.log('upload', result, url)
-
-      if (self.chainId == 4) {
-        console.log('minting...');
+      console.log('minting...');
         const nftLoading = this.$loading({
             lock: true,
             text: '上传中...',
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)'
         });
+      let result = await ipfs.add(JSON.stringify(info))
+    //   let url = `https://ipfs.infura.io/ipfs/${result.path}`
+      let url = `ipfs://${result.path}`
+      console.log('upload', result, url)
+
+      if (self.chainId == 4) {
+        
         try {
           
           let r = await self.contract.mintNFT([url]);
@@ -481,6 +488,10 @@ img {
   width: 100%;
   height: 100%;
   border-radius: 5px;
+}
+video {
+    width: 100%;
+    height: 100%;
 }
 .ipt-area >>> .el-input__inner, .ipt-area >>> .el-textarea__inner {
   background: #1F2024;
