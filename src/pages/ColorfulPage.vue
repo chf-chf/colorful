@@ -149,6 +149,7 @@ export default {
       chainId: null,
       address: '',
       fileUrl: '',
+      imgHash: '',
       inputName: '',
       inputDesc: '',
       inputDate: '',
@@ -163,6 +164,21 @@ export default {
     }
   },
   methods: {
+    async change_chain() { 
+      window.ethereum
+        .request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: config.chainId }],
+        })
+        .then((res) => {
+            console.log(res, 'result chain')
+            // window.location.reload();
+            this.connect()
+        })
+        .catch((error) => {
+            console.log('error chain', error)
+        });
+    },
     async connect() {
       //此函数是链接用户钱包功能,用来将ethers实例化
       let self = this;
@@ -261,6 +277,7 @@ export default {
         const url = `https://ipfs.infura.io/ipfs/${added.path}`
         loading.close()
         this.fileUrl = url
+        this.imgHash = added.path
       } catch (error) {
         loading.close()
         console.log('error uploading file: ', error)
@@ -268,7 +285,6 @@ export default {
     },
     async onUploadInfo() {
       let self = this
-      console.log(+new Date(this.inputDate), 'date')
 
       console.log('contract', self.contract)
       if (!this.inputName) {
@@ -293,7 +309,8 @@ export default {
       let info = {
         name: this.inputName,
         description: this.inputDesc,
-        img: this.fileUrl,
+        // img: this.fileUrl,
+        img: `ipfs://${this.imgHash}`,
         attributes: [
             {
                 display_type: 'date',
@@ -333,7 +350,8 @@ export default {
         // ]
       }
       let result = await ipfs.add(JSON.stringify(info))
-      let url = `https://ipfs.infura.io/ipfs/${result.path}`
+    //   let url = `https://ipfs.infura.io/ipfs/${result.path}`
+      let url = `ipfs://${result.path}`
       console.log('upload', result, url)
 
       if (self.chainId == 4) {
@@ -400,7 +418,8 @@ export default {
   },
   mounted() {
     // 进入页面连接钱包
-    this.connect(); 
+    this.connect();
+    // this.change_chain() 
     // console.log(ethers, 'ethers')
     // let privateKey = "0x0123456789012345678901234567890123456789012345678901234567890123";
     // let wallet = new ethers.Wallet(privateKey);
