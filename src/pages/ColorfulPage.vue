@@ -1,10 +1,9 @@
 <template>
   <div class="colorful">
-    <div style="text-align:left; margin-bottom: 20px; display: flex;">
-      <img style="width: 400px;height: 100%" src="../assets/logo-colorful.png" />
+    <div class="logo" style="text-align:left; margin-bottom: 20px; display: flex;">
+      <img src="../assets/logo-colorful.png" />
     </div>
-    <div style="text-align: right;margin-bottom: 20px;">
-      <!-- <p style="font-size:17px;font-weight:600;">上传产品</p> -->
+    <div class="wallet-info">
       <div>
           <div v-if="address">
             钱包地址：{{address.replace(/(.{6}).*(.{4})/, '$1...$2')}}
@@ -22,12 +21,12 @@
       <div class="left">
         <div class="flex">
           <label>产品名称</label>
-          <el-input class="ipt-area" style="width:400px;" v-model="inputName" placeholder="请输入内容"></el-input>
+          <el-input class="ipt-area" v-model="inputName" placeholder="请输入内容"></el-input>
 
         </div>
         <div class="flex">
           <label>产品介绍</label>
-          <el-input class="ipt-area" style="width:400px;" v-model="inputDesc" type="textarea" rows="4" placeholder="请输入内容"></el-input>
+          <el-input class="ipt-area" v-model="inputDesc" type="textarea" rows="4" placeholder="请输入内容"></el-input>
 
         </div>
         <div class="flex another">
@@ -45,14 +44,26 @@
         <div class="flex">
           <label>上市时间</label>
           <!-- <el-date-picker v-model="inputDate" type="date" placeholder="请选择"></el-date-picker> -->
-          <el-input class="ipt-area" style="width:400px;" v-model="inputDate" placeholder="请输入内容"></el-input>
+          <el-input class="ipt-area" v-model="inputDate" placeholder="请输入内容"></el-input>
 
         </div>
-        <!-- <div class="flex">
+        <div class="flex another">
           <label>其他参数</label>
-          <el-input class="ipt-area" style="width:400px;" v-model="inputOther" type="textarea" rows="4" placeholder="请输入内容"></el-input>
+          <div>
+            <div style="margin-bottom: 15px" v-for="(item, index) in attr" :key="index">
+                <div style="display: flex;">
+                    <el-input class="ipt-area ipt-area-other" v-model="item.trait_type" placeholder="请输入key:"></el-input>
+                    <el-input class="ipt-area ipt-area-other" v-model="item.value" placeholder="请输入value:"></el-input>
+                    <!-- <el-button v-show="attr.length > 1" type="primary" style="width: 80px; height: 40px;" round @click="addParams">删除</el-button> -->
+                </div>
+            </div>
+          </div>
+          
+          <el-button type="primary" style="width: 80px; height: 40px;" round @click="addParams">添加</el-button>
 
-        </div> -->
+          
+
+        </div>
         <div class="flex">
           <label />
           <el-button type="primary" round @click="onUploadInfo">上传产品</el-button>
@@ -69,9 +80,6 @@
                 <video v-else controls :src="fileUrl"></video>
 
           </div>
-          <!-- <div v-show="fileUrl">
-            <img :src="fileUrl" />
-          </div> -->
           <div v-show="!fileUrl" class="no-img">暂无显示</div>
           <div style="padding-left: 7px;">
             <p>产品名称：{{inputName}}</p>
@@ -106,26 +114,6 @@
         <el-button @click="handleClose">确定</el-button>
     </span>
     </el-dialog>
-    <!-- <div v-if="tx">
-      <p>
-        <el-link :href="chainId === 4 ? `https://rinkeby.etherscan.io/tx/${tx.transactionHash}` : `https://etherscan.io/tx/${transactionHash}`" target="blank">查看etherscan</el-link>
-      </p>
-      <p>
-        <el-link href="https://testnets.opensea.io/account" target="_blank">
-          查看NFT-testnets.opensea
-        </el-link>
-      </p>
-    </div> -->
-    <!-- ipfs demo -->
-    <!-- <div>
-      <input type="file" @change="onChange($event)" />
-    </div>
-    <div v-if="fileUrl">
-      <img :src="fileUrl" />
-    </div>
-    <div v-if="fileUrl">
-      <button @click="onUpload">upload</button>
-    </div> -->
   </div>
 </template>
 
@@ -155,7 +143,7 @@ export default {
       inputName: '',
       inputDesc: '',
       inputDate: '',
-    //   inputOther: '',
+      inputOther: '',
       fileName: '',
       tx: null,
       isAdmin: false,
@@ -163,7 +151,8 @@ export default {
       isAdd: true,
       whiteAddr: '',
       dialogVisible: false,
-      isImg: null
+      isImg: null,
+      attr: []
     }
   },
   methods: {
@@ -268,8 +257,14 @@ export default {
     async uploadFile(file) {
       // 上传文件
       console.log(file, 'file');
-      let {raw: {type}, name} = file
+      let {raw: {type}, name, size} = file
 
+      let isLt10M = size / 1024 /1024 < 10
+     
+      if (!isLt10M) {
+          this.$message.error('上传的文件大小不能超过 10MB!');
+          return;
+      }
       this.fileName = name
       this.isImg = type.includes('image')
       const loading = this.$loading({
@@ -292,6 +287,7 @@ export default {
     },
     async onUploadInfo() {
       let self = this
+      console.log(this.attr, 'attr99')
 
       console.log('contract', self.contract)
       if (!this.inputName) {
@@ -312,19 +308,19 @@ export default {
           return;
       }
 
+      for(let i = 0; i < this.attr.length; i++) {
+          if (!this.attr[i].trait_type || !this.attr[i].value) {
+              self.$message.error('其他参数不能为空')
+              return;
+          }
+      }
+
 
       let info = {
         name: this.inputName,
         description: this.inputDesc,
-        // img: this.fileUrl,
         image: `ipfs://${this.imgHash}`,
-        attributes: [
-            {
-                display_type: 'date',
-                trait_type: 'Setup Time',
-                value: +new Date(this.inputDate)
-            }
-        ]
+        attributes: this.attr,
         // properties: {
         //   base: 'starfish',
         //   rich_property: {
@@ -391,6 +387,13 @@ export default {
         alert("bad chain");
       }
     },
+    addParams() {
+        console.log(this.attr, 'add')
+        this.attr.push(Object.assign({
+            trait_type: '',
+            value: ''
+        }))
+    },
     whitelistSetting() {
         this.dialogVisible = true
         // this.$router.push({name: 'WhitelistPage'}).catch(err => err)
@@ -425,6 +428,10 @@ export default {
     }
   },
   mounted() {
+    this.attr.push({
+        trait_type: '',
+        value: ''
+    })
     // 进入页面连接钱包
     this.connect();
     this.change_chain() 
@@ -442,6 +449,22 @@ input {
   border: none;
   color: rgba(255, 255, 255, 0.6);
 }
+label {
+  width: 130px;
+  text-align: left;
+}
+img {
+  display: inline-block;
+  /* width: 230px;
+  height: 120px; */
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}
+video {
+    width: 100%;
+    height: 100%;
+}
 .colorful {
   /* padding: 30px 18%; */
   width: 1000px;
@@ -450,6 +473,19 @@ input {
   font-weight: 700;
   font-family: Arial, Helvetica, sans-serif;
 }
+.logo {
+    text-align: left;
+    margin-bottom: 20px;
+    display: flex;
+}
+.logo img {
+    width: 400px;
+    height: 100%;
+}
+.wallet-info {
+    text-align: right;
+    margin-bottom: 20px;
+}
 .flex {
   display: flex;
   justify-content: space-between;
@@ -457,10 +493,6 @@ input {
 }
 .flex.another {
   justify-content: left;
-}
-label {
-  width: 130px;
-  text-align: left;
 }
 .wrapper {
   padding: 18px 14px 13px 12.5px;
@@ -482,17 +514,12 @@ label {
   height: 120px; */
   margin-bottom: 50px;
 }
-img {
-  display: inline-block;
-  /* width: 230px;
-  height: 120px; */
-  width: 100%;
-  height: 100%;
-  border-radius: 5px;
+.ipt-area {
+    width: 460px;
 }
-video {
-    width: 100%;
-    height: 100%;
+.ipt-area-other {
+    width: 180px;
+    margin-right: 10px;
 }
 .ipt-area >>> .el-input__inner, .ipt-area >>> .el-textarea__inner {
   background: #1F2024;
@@ -502,7 +529,7 @@ video {
   border: none;
 }
 .el-button--primary {
-  width: 400px;
+  width: 460px;
   background: #E4002B;
   box-shadow: 2px 2px 10px #070002;
   border-radius: 30px;
