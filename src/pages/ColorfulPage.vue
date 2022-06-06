@@ -41,10 +41,10 @@
           </el-upload>
 
         </div>
-        <div class="flex">
+        <div class="flex another">
           <label>上市时间</label>
-          <!-- <el-date-picker v-model="inputDate" type="date" placeholder="请选择"></el-date-picker> -->
-          <el-input class="ipt-area" v-model="inputDate" placeholder="请输入内容"></el-input>
+          <el-date-picker class="ipt-area" v-model="inputDate" type="date" value-format="yyyy-MM-dd" placeholder="请选择"></el-date-picker>
+          <!-- <el-input class="ipt-area" v-model="inputDate" placeholder="请输入内容"></el-input> -->
 
         </div>
         <div class="flex another">
@@ -287,7 +287,7 @@ export default {
     },
     async onUploadInfo() {
       let self = this
-      console.log(this.attr, 'attr99')
+      console.log(this.inputDate, 'attr99')
 
       console.log('contract', self.contract)
       if (!this.inputName) {
@@ -315,16 +315,15 @@ export default {
           }
       }
 
-      this.attr.push({
-            display_type: 'date',
-            trait_type: 'Setup Time',
-            value: +new Date(this.inputDate)
-        })
       let info = {
         name: this.inputName,
         description: this.inputDesc,
         image: `ipfs://${this.imgHash}`,
-        attributes: this.attr,
+        attributes: this.attr.concat({
+            display_type: 'date',
+            trait_type: 'Setup Time',
+            value: +new Date(this.inputDate)
+        }),
         // properties: {
         //   base: 'starfish',
         //   rich_property: {
