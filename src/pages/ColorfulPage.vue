@@ -48,6 +48,13 @@
 
         </div>
         <div class="flex another">
+            <label>boost参数</label>
+            <div style="display: flex;">
+                <el-input class="ipt-area ipt-area-other" v-model="boostKey" placeholder="请输入key:"></el-input>
+                <el-input class="ipt-area ipt-area-other" v-model="boostVal" type="number" placeholder="请输入value:"></el-input>
+            </div>
+        </div>
+        <div class="flex another">
           <label>其他参数</label>
           <div>
             <div style="margin-bottom: 15px" v-for="(item, index) in attr" :key="index">
@@ -60,10 +67,8 @@
           </div>
           
           <el-button type="primary" style="width: 80px; height: 40px;" round @click="addParams">添加</el-button>
-
-          
-
         </div>
+        
         <div class="flex">
           <label />
           <el-button type="primary" round @click="onUploadInfo">上传产品</el-button>
@@ -152,7 +157,9 @@ export default {
       whiteAddr: '',
       dialogVisible: false,
       isImg: null,
-      attr: []
+      attr: [],
+      boostKey: '',
+      boostVal: null
     }
   },
   methods: {
@@ -323,6 +330,10 @@ export default {
             display_type: 'date',
             trait_type: 'Setup Time',
             value: +new Date(this.inputDate)
+        }).concat({
+            display_type: 'boost_number',
+            trait_type: this.boostKey,
+            value: this.boostVal
         }),
         // properties: {
         //   base: 'starfish',
