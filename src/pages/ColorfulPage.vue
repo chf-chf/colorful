@@ -315,7 +315,11 @@ export default {
           }
       }
 
-
+      this.attr.push({
+            display_type: 'date',
+            trait_type: 'Setup Time',
+            value: +new Date(this.inputDate)
+        })
       let info = {
         name: this.inputName,
         description: this.inputDesc,
@@ -352,7 +356,7 @@ export default {
         //   }
         // ]
       }
-      console.log('minting...');
+      console.log('minting...', info);
         const nftLoading = this.$loading({
             lock: true,
             text: '上传中...',
