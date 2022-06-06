@@ -535,6 +535,14 @@ video {
     width: 180px;
     margin-right: 10px;
 }
+/* 去掉number增减箭头样式 */
+::v-deep .ipt-area input::-webkit-outer-spin-button,
+::v-deep .ipt-area input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+}
+::v-deep .ipt-area input[type="number"] {
+    -moz-appearance: textfield !important;
+}
 .ipt-area >>> .el-input__inner, .ipt-area >>> .el-textarea__inner {
   background: #1F2024;
   box-shadow: -4px -4px 20px rgba(99, 99, 99, 0.31), 4px 4px 20px #000000;
